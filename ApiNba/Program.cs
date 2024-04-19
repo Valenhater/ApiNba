@@ -3,12 +3,19 @@ using ApiNba.Data;
 using ApiNba.Repositories;
 using Microsoft.OpenApi.Models;
 using ApiNba.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<HelperPathProvider>();
 builder.Services.AddTransient<HelperCryptography>();
+
+HelperActionServicesOAuth helper = new HelperActionServicesOAuth(builder.Configuration);
+builder.Services.AddSingleton<HelperActionServicesOAuth>(helper);
+builder.Services.AddAuthentication(helper.GetAuthenticateSchema()).AddJwtBearer(helper.GetJwtBearerOptions());
+
+
 builder.Services.AddTransient<HelperTools>();
 
 builder.Services.AddTransient<RepositoryEntradas>();
@@ -49,6 +56,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

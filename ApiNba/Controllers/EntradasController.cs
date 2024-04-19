@@ -1,5 +1,6 @@
 ﻿using ApiNba.Models;
 using ApiNba.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

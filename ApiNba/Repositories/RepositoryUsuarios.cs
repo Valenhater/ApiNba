@@ -13,18 +13,11 @@ namespace ApiNba.Repositories
     public class RepositoryUsuarios
     {
         private NbaContext context;
-        private SqlConnection cn;
-        private SqlCommand com;
 
         public RepositoryUsuarios(NbaContext context)
         {
-            this.context = context;
-            string connectionString = "Data Source=sqlvalentin.database.windows.net;Initial Catalog=AZURETAJAMAR;User ID=adminsql;Password=Admin123 ;Trust Server Certificate=True";
-            this.cn = new SqlConnection(connectionString);
-            this.com = new SqlCommand();
-            this.com.Connection = cn;
+            this.context = context;          
         }
-
 
         public async Task<bool> LogInUserAsync(string nombre, string password)
         {
@@ -57,7 +50,7 @@ namespace ApiNba.Repositories
             }
         }
 
-        public Usuario GetUser(string username)
+        public async Task<Usuario> GetUser(string username)
         {
             var usuario = (from u in context.Usuarios
                            where u.Nombre == username
@@ -71,21 +64,16 @@ namespace ApiNba.Repositories
                            select datos;
             return consulta.ToList();
         }
-        public bool UsuarioExists(string username)
+        public async Task<bool> UsuarioExistsAsync(string username)
         {
-            var consulta = from u in context.Usuarios
-                           where u.Nombre == username
-                           select u;
-
-            return consulta.Any();
+            var usuario = await context.Usuarios.FirstOrDefaultAsync(u => u.Nombre == username);
+            return usuario != null;
         }
-        public bool EmailExists(string email)
-        {
-            var consulta = from u in context.Usuarios
-                           where u.Email == email
-                           select u;
 
-            return consulta.Any();
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            var usuario = await context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            return usuario != null;
         }
         private async Task<int> GetMaxIdUsuarioAsync()
         {
@@ -115,41 +103,7 @@ namespace ApiNba.Repositories
             this.context.Usuarios.Add(user);
             await this.context.SaveChangesAsync();
             return user;
-        }
-
-        public void UpdateUserAsync(int id, string nombre, string email, string nombreCompleto, string direccion)
-        {
-            var sql = "UPDATE Usuarios SET email = @email, nombre = @nombre";
-
-            // Agregar nombreCompleto solo si se proporciona un valor
-            if (!string.IsNullOrEmpty(nombreCompleto))
-            {
-                sql += ", NombreCompleto = @nombreCompleto";
-                this.com.Parameters.AddWithValue("@nombreCompleto", nombreCompleto);
-            }
-
-            // Agregar direccion solo si se proporciona un valor
-            if (!string.IsNullOrEmpty(direccion))
-            {
-                sql += ", Direccion = @direccion";
-                this.com.Parameters.AddWithValue("@direccion", direccion);
-            }
-
-            sql += " WHERE idusuario = @id;";
-
-            this.com.Parameters.AddWithValue("@id", id);
-            this.com.Parameters.AddWithValue("@email", email);
-            this.com.Parameters.AddWithValue("@nombre", nombre);
-
-            this.com.CommandType = CommandType.Text;
-            this.com.CommandText = sql;
-
-            this.cn.Open();
-            int af = this.com.ExecuteNonQuery();
-
-            this.cn.Close();
-            this.com.Parameters.Clear();
-        }
+        }      
 
         public async Task<Usuario> GetUserByIdAsync(int id)
         {
@@ -163,6 +117,10 @@ namespace ApiNba.Repositories
                 context.Usuarios.Remove(user);
                 await context.SaveChangesAsync();
             }
+        }
+        public async Task<int> SaveChangesAsync()
+        {
+            return await context.SaveChangesAsync();
         }
     }
 }
