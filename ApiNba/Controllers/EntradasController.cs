@@ -20,6 +20,11 @@ namespace ApiNba.Controllers
         {
             return await this.repo.GetProximosPartidosAsync();
         }
+        [HttpGet("GetEntrada/{id}")]
+        public async Task<ActionResult<ModelVistaProximosPartidos>> VistaEntrada(int id)
+        {
+            return await this.repo.FindPartidoAsync(id);
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<List<ModelVistaProximosPartidos>>> PartidosFavoritos(List<int> id)
         {
@@ -31,23 +36,29 @@ namespace ApiNba.Controllers
             await this.repo.ReservarEntradaAsync(reserva.UsuarioId,reserva.PartidoId,reserva.Asiento);
             return Ok();
         }
-        [HttpGet("GetEntradasReservadas")]
-        public async Task<ActionResult<List<ReservaEntrada>>> EntradasReservadas()
+        [HttpGet("GetEntradasReservadas/{idusuario}")]
+        public async Task<ActionResult<List<VistaEntradasReservadas>>> EntradasReservadas(int idusuario)
         {
-            return await this.repo.GetReservasEntradasAsync();
+            var reservas = await this.repo.GetReservasEntradasAsync(idusuario);
+            return Ok(reservas);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePartido(int id)
         {
-            if (await this.repo.FindPartidoAsync(id) == null)
-            {
-                return NotFound();
-            }
-            else
-            {
+            
                 await this.repo.EliminarReservaEntradaAsync(id);
                 return Ok();
+            
+        }
+        [HttpGet("partidosfavoritos")]
+        public async Task<ActionResult<List<ModelVistaProximosPartidos>>> GetPartidosFavoritos()
+        {
+            var partidosFavoritos = await this.repo.GetPartidosFavoritosAsync();
+            if (partidosFavoritos == null)
+            {
+                return NotFound("No hay partidos almacenados en el carrito.");
             }
+            return Ok(partidosFavoritos);
         }
     }
 }

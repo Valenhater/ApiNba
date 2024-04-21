@@ -15,10 +15,6 @@ namespace ApiNba.Models
         public int PartidoId { get; set; }
         [Column("ASIENTO ")]
         public int Asiento { get; set; }
-        [ForeignKey("UsuarioId")]
-        public Usuario Usuario { get; set; }
-        [ForeignKey("PartidoId")]
-        public ProximoPartido Partido { get; set; }
     }
 }
 

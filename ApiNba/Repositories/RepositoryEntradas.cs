@@ -68,11 +68,10 @@ namespace ApiNba.Repositories
             }
         }
 
-        public async Task<List<ReservaEntrada>> GetReservasEntradasAsync()
+        public async Task<List<VistaEntradasReservadas>> GetReservasEntradasAsync(int idUsuario)
         {
-            return await context.ReservaEntradas
-                .Include(r => r.Usuario)
-                .Include(r => r.Partido)
+            return await context.VistasEntradasReservadas
+                .Where(r => r.UsuarioId == idUsuario)
                 .ToListAsync();
         }
         public async Task<bool> EliminarReservaEntradaAsync(int reservaId)
@@ -85,6 +84,21 @@ namespace ApiNba.Repositories
                 return true;
             }
             return false;
+        }
+        public async Task<List<ModelVistaProximosPartidos>> GetPartidosFavoritosAsync()
+        {
+            // Aquí obtienes los IDs desde la base de datos
+            var idsPartidos = await this.context.ReservaEntradas.Select(f => f.PartidoId).ToListAsync();
+
+            var consulta = from datos in this.context.VistaProximosPartidos where idsPartidos.Contains(datos.IdPartido) select datos;
+            if (consulta.Count() == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return await consulta.ToListAsync();
+            }
         }
 
     }

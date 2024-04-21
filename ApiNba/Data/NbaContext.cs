@@ -16,6 +16,7 @@ namespace ApiNba.Data
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<ModelVistaProximosPartidos> VistaProximosPartidos { get; set; }
+        public DbSet<VistaEntradasReservadas> VistasEntradasReservadas { get; set; }
 
     }
 }
