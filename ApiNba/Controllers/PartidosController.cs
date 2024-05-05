@@ -25,9 +25,49 @@ namespace ApiNba.Controllers
             return await this.repo.GetAllEquiposAsync();
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Equipo>> FindDepartamento(int id)
+        public async Task<ActionResult<Equipo>> FindPartido(int id)
         {
             return await this.repo.ObtenerEquipoPorId(id);
         }
+        [HttpPost]
+        public async Task<IActionResult> InsertarEquipo(Equipo nuevoEquipo)
+        {
+            await this.repo.InsertarEquipoAsync(nuevoEquipo);
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ModificarEquipo(int id, Equipo equipoModificado)
+        {
+            if (id != equipoModificado.IdEquipo)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await this.repo.ModificarEquipoAsync(equipoModificado);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarEquipo(int id)
+        {
+            try
+            {
+                await repo.EliminarEquipoAsync(id);
+                return NoContent(); // Retorna NoContent si la eliminación fue exitosa
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound(); // Retorna NotFound si el equipo no se encontró
+            }
+        }
+
     }
 }

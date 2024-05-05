@@ -87,6 +87,33 @@ namespace ApiNba.Repositories
         {
             return await this.context.Jugadores.CountAsync();
         }
+        public async Task DeleteJugadorAsync(int id)
+        {
+            var jugador = await context.Jugadores.FindAsync(id);
+            if (jugador != null)
+            {
+                context.Jugadores.Remove(jugador);
+                await context.SaveChangesAsync();
+            }
+        }
+        public async Task InsertarJugadorAsync(Jugador nuevoJugador)
+        {
+            await context.Jugadores.AddAsync(nuevoJugador);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task ModificarJugadorAsync(Jugador jugadorModificado)
+        {
+            var jugadorExistente = await context.Jugadores.FindAsync(jugadorModificado.IdJugador);
+            jugadorExistente.Nombre = jugadorModificado.Nombre;
+            jugadorExistente.EquipoId = jugadorModificado.EquipoId;
+            jugadorExistente.Posicion = jugadorModificado.Posicion;
+            jugadorExistente.PuntosPorPartido = jugadorModificado.PuntosPorPartido;
+            jugadorExistente.RebotesPorPartido = jugadorModificado.RebotesPorPartido;
+            jugadorExistente.AsistenciasPorPartido = jugadorModificado.AsistenciasPorPartido;
+            jugadorExistente.Imagen = jugadorModificado.Imagen;
+            await context.SaveChangesAsync();
+        }
 
     }
 }

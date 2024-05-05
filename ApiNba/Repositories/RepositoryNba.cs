@@ -55,5 +55,33 @@ namespace ApiNba.Repositories
             var consulta = this.context.Equipos.FirstOrDefault(e => e.IdEquipo == id);
             return consulta;
         }
+        public async Task InsertarEquipoAsync(Equipo nuevoEquipo)
+        {
+            await this.context.Equipos.AddAsync(nuevoEquipo);
+            await this.context.SaveChangesAsync();
+        }
+        public async Task ModificarEquipoAsync(Equipo equipoModificado)
+        {
+            var equipoExistente = await context.Equipos.FindAsync(equipoModificado.IdEquipo);        
+            equipoExistente.Nombre = equipoModificado.Nombre;
+            equipoExistente.Ciudad = equipoModificado.Ciudad;
+            equipoExistente.Fundacion = equipoModificado.Fundacion;
+            equipoExistente.Imagen = equipoModificado.Imagen;
+            equipoExistente.ImagenFondo = equipoModificado.ImagenFondo;
+            await context.SaveChangesAsync();
+        }
+        public async Task EliminarEquipoAsync(int id)
+        {
+            var equipo = await context.Equipos.FindAsync(id);
+            if (equipo != null)
+            {
+                context.Equipos.Remove(equipo);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException($"No se encontró ningún equipo con el ID {id}");
+            }
+        }
     }
 }

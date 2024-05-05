@@ -26,5 +26,43 @@ namespace ApiNba.Controllers
         {
             return await this.repo.ObtenerJugadorPorId(id);
         }
+        [HttpPost]
+        public async Task<ActionResult<Jugador>> InsertarJugador(Jugador nuevoJugador)
+        {
+            await this.repo.InsertarJugadorAsync(nuevoJugador);
+            return CreatedAtAction(nameof(GetJugador), new { id = nuevoJugador.IdJugador }, nuevoJugador);
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ModificarJugador(int id, Jugador jugadorModificado)
+        {
+            if (id != jugadorModificado.IdJugador)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await this.repo.ModificarJugadorAsync(jugadorModificado);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarJugador(int id)
+        {
+            try
+            {
+                await repo.DeleteJugadorAsync(id);
+                return NoContent(); // Retorna NoContent si la eliminación fue exitosa
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound(); // Retorna NotFound si el jugador no se encontró
+            }
+        }
     }
 }
