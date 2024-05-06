@@ -60,5 +60,6 @@ namespace ApiNba.Controllers
             }
             return Ok(partidosFavoritos);
         }
+
     }
 }

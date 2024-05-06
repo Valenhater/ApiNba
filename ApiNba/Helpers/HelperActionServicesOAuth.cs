@@ -10,14 +10,11 @@ namespace ApiNba.Helpers
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public string SecretKey { get; set; }
-        public HelperActionServicesOAuth(IConfiguration configuration)
+        public HelperActionServicesOAuth(string issuer, string audience, string secretkey)
         {
-            this.Issuer =
-                configuration.GetValue<string>("ApiOAuth:Issuer");
-            this.Audience =
-                configuration.GetValue<string>("ApiOAuth:Audience");
-            this.SecretKey =
-                configuration.GetValue<string>("ApiOAuth:SecretKey");
+            this.Issuer = issuer;
+            this.Audience = audience;
+            this.SecretKey = secretkey;
         }
         //NECESITAMOS UN METODO PARA GENERAR EL TOKEN  
         //QUE SE BASA EN EL SECRET KEY 

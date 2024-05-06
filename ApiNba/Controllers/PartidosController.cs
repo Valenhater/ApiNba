@@ -1,5 +1,6 @@
 ﻿using ApiNba.Models;
 using ApiNba.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,13 +30,14 @@ namespace ApiNba.Controllers
         {
             return await this.repo.ObtenerEquipoPorId(id);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> InsertarEquipo(Equipo nuevoEquipo)
         {
             await this.repo.InsertarEquipoAsync(nuevoEquipo);
             return Ok();
         }
-
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> ModificarEquipo(int id, Equipo equipoModificado)
         {
@@ -55,6 +57,7 @@ namespace ApiNba.Controllers
 
             return Ok();
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarEquipo(int id)
         {
